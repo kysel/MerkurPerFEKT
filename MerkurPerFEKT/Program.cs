@@ -10,6 +10,7 @@ namespace MerkurPerFEKT
     {
         static void Main(string[] args)
         {
+
         }
     }
 }
