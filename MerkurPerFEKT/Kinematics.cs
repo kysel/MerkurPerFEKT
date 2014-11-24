@@ -23,6 +23,7 @@ namespace MerkurPerFEKT
             m[5] = m5;
         }
 
+        public int this[int index] { get { return this.m[index]; } set { this.m[index] = value; } }
                 
         public IEnumerator GetEnumerator()
         {
@@ -49,26 +50,43 @@ namespace MerkurPerFEKT
     public class Interpolation
     {
         #region Singleton
-           private static readonly Interpolation instance = new Interpolation();   
-           private Interpolation(){}
-           public static Interpolation Instance
-           {
-              get 
-              {
-                 return instance; 
-              }
-           }
+        private static readonly Interpolation instance = new Interpolation();   
+        private Interpolation(){}
+        public static Interpolation Instance
+        {
+            get 
+            {
+                return instance; 
+            }
+        }
         #endregion
+        SOS Sos;
+        void Init(SOS Sos)
+        {
+            this.Sos = Sos;
+        }
 
-        public void Interpolate(Position from, Position to, double speed = 10)
+        public void Interpolate(Position from, Position to, double speed = 100)
         {
             int[] delta = new int[6];
             for (int i = 0; i != 6; i++)
-            {
                 delta[i] = Math.Abs(from.m[i] - to.m[i]);
-            }
-            
 
+            Position cur = from;
+            bool[] change = {false,false,false,false,false};
+            var endT = 10 * speed;
+            var curT = 0;
+            while(++curT<endT)
+            {
+                for (int i = 0; i != 5; i++)
+                {
+                    if (from[i] + delta[i] * curT / endT != cur[i])
+                        new System.Threading.Thread(() => Sos.MotorMove((byte)i, (byte)(from[i] + delta[i] * curT / endT))).Start();                       
+                }
+                System.Threading.Thread.Sleep(10);
+            }
         }
     }
 }
+
+

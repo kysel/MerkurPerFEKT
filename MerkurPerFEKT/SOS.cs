@@ -10,6 +10,7 @@ namespace MerkurPerFEKT
     {
         SerialPort Serial;
         byte[] Motor;
+        object WriteLocker = new object();
         public SOS(string Com, int BaudRate)
         {
             Serial = new SerialPort(Com , BaudRate);
@@ -32,7 +33,8 @@ namespace MerkurPerFEKT
                 Packet[0] = 0xFF;
                 Packet[1] = Convert.ToByte(index);
                 Packet[2] = value;
-                Serial.Write(Packet, 0, 3);
+                lock(WriteLocker)
+                    Serial.Write(Packet, 0, 3);
    
             }
         }
