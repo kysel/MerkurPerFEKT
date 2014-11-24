@@ -10,7 +10,8 @@ namespace MerkurPerFEKT
     {
         static void Main(string[] args)
         {
-
+            SOS Motor = new SOS("asd", 22);
+            Motor[0] = 1;
         }
     }
 }
